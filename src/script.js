@@ -104,24 +104,18 @@ function setLocalStorage() {
     });
 }
 
-// add possiblity to edit the text
+// add possiblity to edit the text---------------------------------------------
 function saveEditedText() {
     const items = document.querySelectorAll(".itemText");
     items.forEach((item) => {
         item.addEventListener("blur", () => {
-            // update Object
-            // const localStorageKey = localStorage.key(i);
-            // const localStorageValue = JSON.parse(localStorage.getItem(localStorageKey));
-            // allItems[localStorageKey] = localStorageValue;
-            // const objectKey = item.dataset.id
-            // const objectValue = allItems[objectKey]
-            // console.log(objectKey)
-            // console.log(objectValue)
-            // Object.setItem("key", "value")
-            // setLocalStorage()
-        })
-    })
+            const dataId = item.getAttribute("data-id");
+            allItems[dataId].textContent = item.textContent; 
+            setLocalStorage();
+        });
+    });
 }
+
 
 
 // prevent default enter ------------------------------------------------------

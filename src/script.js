@@ -12,7 +12,7 @@ import {DOM} from "./modules.js"
 // add "note"
     // functions
         // add new                  done
-        // add text                 
+        // add text                 done
         // add date                 (N°7)
         // add important            
         // remove                   
@@ -34,8 +34,7 @@ addItemsToDOM();
 
 addNewItem();
 saveEditedText();
-// happens only one
-// preventDefaultEnter(".itemText");
+preventDefaultEnter(".itemText");
 
 
 
@@ -78,19 +77,17 @@ function addItemsToDOM() {
 // add new item----------------------------------------------------------------
 function addNewItem() {
     document.querySelector(".addIcon").addEventListener("click", () => {
-        const id1 = Date.now();
-        const id2 = id1 + 1;
-        
+        const timestamp = Date.now();
+                
         const elements = {
-            [`${id1}`]: DOM.defineElement(
+            [`${timestamp}`]: DOM.defineElement(
                 ".list", "div", "item", "", {"data-id": id1,}),
-            [`${id2}`]: DOM.defineElement(
+            [`${timestamp + 1}`]: DOM.defineElement(
                 ".list", "div", "itemText", "created item", 
                 {contenteditable: "true", "data-id": id2,}),
         };
         
-        allItems = {...allItems, ...elements};
-        console.log(allItems);  
+        allItems = {...allItems, ...elements}; 
         setLocalStorage();
         addItemsToDOM();
     });
@@ -116,17 +113,15 @@ function saveEditedText() {
     });
 }
 
-
-
 // prevent default enter ------------------------------------------------------
-// function preventDefaultEnter(element) {
-//     document.querySelectorAll(element).forEach(itemText => {
-//         itemText.addEventListener('keydown', (e) => {
-//             if (e.key === 'Enter' && !e.shiftKey) {
-//                 e.preventDefault();
-//                 itemText.blur();
-//             }
-//         });
-//     });
-// }
+function preventDefaultEnter(element) {
+    document.querySelectorAll(element).forEach(itemText => {
+        itemText.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                itemText.blur();
+            }
+        });
+    });
+}
  

@@ -1,6 +1,7 @@
 // DOM functions_______________________________________________________________
 
-// const elements = [DOM.defineElement("", "", "", "", {src: "",}),];
+// multiple classes with whitespace " " between
+// const elements = [DOM.defineElement("", "", "", {src: "",}),];
 // elements.forEach((element) => DOM.addElement(element));
 
 const DOM = (function() {
@@ -9,15 +10,13 @@ const DOM = (function() {
     const defineElement = function defineElement(
         parentSelector, 
         htmlTag, 
-        className, 
-        textContent, 
+        innerHTML,
         attributes = {}
     ) {
         return { 
             parentSelector, 
-            htmlTag, 
-            className, 
-            textContent, 
+            htmlTag,
+            innerHTML,
             attributes
         };
     };
@@ -26,13 +25,11 @@ const DOM = (function() {
     const addElement = function addElement({ 
         parentSelector, 
         htmlTag, 
-        className, 
-        textContent ="", 
+        innerHTML ="",
         attributes = {}
     }) {
         const newChild = document.createElement(htmlTag);
-        newChild.classList.add(...className.split(".")); // >1 possible (c1.c2)
-        newChild.innerHTML = textContent; // HTML possible (<br> / <hr>)
+        newChild.innerHTML = innerHTML; // HTML possible (<br> / <hr>)
         for (const [key, value] of Object.entries(attributes)) {
             newChild.setAttribute(key, value);
         }

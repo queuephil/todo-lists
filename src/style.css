@@ -81,12 +81,16 @@ body {
   } */
 }
 
-.list {
+.noteBook {
   display: grid;
   grid-template: 1fr;
+  >.note {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    >.text {
+      background-color: lightgreen;
+      width: 80%;
+    }
+  }
 }
-
-.itemText {
-  background-color: lightgreen;
-}
-

@@ -13,116 +13,162 @@ import {DOM, OBJ} from "./modules.js"
     // functions
         // add new                  done
         // add text                 done
-        // remove                   
+        // remove                   done
         // move up/down             
         // make child/sibling       
         // collapse / expand        
         // check                    
-        // add date                 (N°7)
         // add important            
+        // add date                 (N°7)
         
 // here happens all the magic__________________________________________________
-let desk = {};
+let ultimateParent = {};
+
 addUserInterface();
+getLocalStorage(ultimateParent);
+refreshDom(ultimateParent);
 
-// if something is assigned to an object the key and class have to be the same!!
-
+//-----------------------------------------------------------------------------
 function addUserInterface(){
+    const timestamp = Date.now();
     const userInterface = {
-        noteBook1: {
-            prop: {
+        noteBook: {
+            domProperties: {
                 htmlTag: "div",
-                innerHTML: "noteBook1",
-                attributes: {class: "noteBook1 noteBook"},
+                innerHTML: "noteBook",
+                attributes: {
+                    "data-id": "noteBook",
+                    class: "noteBook"},
             },
         },
-        addIcon: {
-            prop: {
+        addNoteButton: {
+            domProperties: {
                 htmlTag: "div",
                 innerHTML: "add",
-                attributes: {class: "material-symbols-outlined addIcon"},
+                attributes: {
+                    "data-id": "addNoteButton",
+                    class: "material-symbols-outlined addIcon"},
             },
         },
     }
-    Object.assign(desk, userInterface)
-    addItemsToDOM(desk)
+    Object.assign(ultimateParent, userInterface);
+    refreshDom(ultimateParent);
 }
 
+//-----------------------------------------------------------------------------
+function refreshDom(ultimateParent) {
+    document.querySelector(".container").innerHTML = "";
+    const flattenedArray = OBJ.flattenForDOMaddElement(ultimateParent);
+    flattenedArray.forEach((element) => {
+        DOM.addElement(element);
+    });
+    addNewNote();
+    autoSaveText(".text", ultimateParent);
+    preventDefaultEnter(".text");
+    deleteNote(".deleteIcon", ultimateParent);
+}
+
+//-----------------------------------------------------------------------------
 function addNewNote() {
     document.querySelector(".addIcon").addEventListener("click", () => {
         const timestamp = Date.now();
         const newNote = {
-            [`note${timestamp+1}`]: {
-                prop: {
+            [timestamp+1]: {
+                domProperties: {
                     htmlTag: "div",
                     innerHTML: " ",
-                    dataId: timestamp + 1,
                     attributes: {
-                        "data-id": timestamp + 1,
+                        "data-id": timestamp+1,
                         class: `note${timestamp+1} note`},
                 },
-                text: {
-                    prop: {
+                [timestamp+2]: {
+                    domProperties: {
                         htmlTag: "div",
                         innerHTML: "...",
-                        dataId: timestamp + 2,
                         attributes: {
-                            "data-id": timestamp + 2,
+                            "data-id": timestamp+2,
                             class: "text", 
                             contenteditable: "true"},
                     },
                 },
-                deleteIcon: {
-                    prop: {
+                [timestamp+3]: {
+                    domProperties: {
                         htmlTag: "div",
                         innerHTML: "delete",
-                        dataId: timestamp + 3,
                         attributes: {
-                            "data-id": timestamp + 3,
+                            "data-id": timestamp+3,
                             class: "material-symbols-outlined deleteIcon"},
                     },
                 }
             },
         }
-        Object.assign(desk.noteBook1, newNote)
-        addItemsToDOM(desk)
-        removeElement(".deleteIcon", desk)
+        Object.assign(ultimateParent.noteBook, newNote);
+        refreshDom(ultimateParent);
+        setLocalStorage(ultimateParent);
     })
 }
 
-function addItemsToDOM(object) {
-    const flattenedArray = OBJ.flattenForDOMaddElement(object);
-    document.querySelector(".container").innerHTML ="";
-    flattenedArray.forEach((element) => {
-        DOM.addElement(element)
-    })
-    addNewNote();
-    saveEditedText(".text", desk);
-} 
+//_____________________________________________________________________________
 
-function saveEditedText(textElement, dataObject) {
-    document.querySelectorAll(textElement).forEach((element) => {
-        element.addEventListener("blur", () => {
-            const newText = element.innerText || element.textContent; 
-            const dataId = element.dataset.id; 
-            changeObjectsText(dataObject, dataId, newText);
-        });
-    });
-}
-
-function changeObjectsText(object, id, newValue) {
+//-----------------------------------------------------------------------------
+function findObjectById(object, domId) {
     for (const key in object) {
-        if (object[key].dataId == id) {
-            object[key].innerHTML = newValue; // this changes the object
-            return; 
+        if (key == domId) {
+            return { foundObject: object, key };
         }
         if (typeof object[key] == "object") {
-            changeObjectsText(object[key], id, newValue); 
+            const returnValue = findObjectById(object[key], domId); 
+            if (returnValue) return returnValue;
         }
     }
 }
 
-// prevent default enter-------------------------------------------------------
+//-----------------------------------------------------------------------------
+function deleteNote(buttonElement, ultimateParent) {
+    document.querySelectorAll(buttonElement).forEach(element => {
+        element.addEventListener("click", () => {
+            // define id here (in case the parentId is required)
+            const domIdObject = element.dataset.id;
+            const domIdParent = document.querySelector(
+                `[data-id="${domIdObject}"]`).parentElement
+            const domId = domIdParent.dataset.id
+            // run the function
+            const { foundObject, key } = findObjectById(ultimateParent, domId);
+            delete foundObject[key];
+            // refresh the DOM
+            refreshDom(ultimateParent);
+            setLocalStorage(ultimateParent);
+        })
+    })
+}
+
+function markDone() {
+    
+}
+
+
+
+
+
+
+//-----------------------------------------------------------------------------
+function autoSaveText(textElement, ultimateParent) {
+    document.querySelectorAll(textElement).forEach((element) => {
+        element.addEventListener("blur", () => {
+            // define id here (in case the parentId is required)   
+            const domId = element.dataset.id;
+            // run the function
+            const newValue = element.innerHTML;
+            const { foundObject, key } = findObjectById(ultimateParent, domId);
+            foundObject[key]["domProperties"].innerHTML = newValue;
+            // refresh the DOM
+            refreshDom(ultimateParent);
+            setLocalStorage(ultimateParent);
+        });
+    });
+}
+
+//-----------------------------------------------------------------------------
 function preventDefaultEnter(textElement) {
     document.querySelectorAll(textElement).forEach(element => {
         element.addEventListener("keydown", (e) => {
@@ -134,48 +180,21 @@ function preventDefaultEnter(textElement) {
     });
 }
 
-// remove item function--------------------------------------------------------
-function removeElement(buttonElement, dataObject) {
-    document.querySelectorAll(buttonElement).forEach(element => {
-        element.addEventListener("click", () => {
-            const dataIdObject = element.dataset.id;
-            const parentElement = document.querySelector(`[data-id="${dataIdObject}"]`).parentElement
-            const dataId = parentElement.dataset.id
-            // console.log(dataIdObject)
-            // console.log(dataId)
-            deleteObject(dataObject, dataId);
-        })
-    })
+//_____________________________________________________________________________
+
+//-----------------------------------------------------------------------------
+function getLocalStorage(ultimateParent) {
+    const locallyStoredData = JSON.parse(localStorage.getItem("noteBook"));
+    console.log(locallyStoredData)
+    Object.assign(ultimateParent, locallyStoredData);
 }
 
-function deleteObject(object, id) {
-    for (const key in object) {
-        if (object[key].dataId == id) {
-            delete object[key];
-            return; 
-        }
-        if (typeof object[key] == "object") {
-            deleteObject(object[key], id); 
-        }
-    }
-}
-
-// local storage_______________________________________________________________
-
-// get local storage-----------------------------------------------------------
-function getLocalStorage() {
-    for(let i = 0; i < localStorage.length; i++) {
-        const localStorageKey = localStorage.key(i);
-        const localStorageValue = JSON.parse(localStorage.getItem(localStorageKey));
-        allItems[localStorageKey] = localStorageValue;
-    }
-}
-
-// set local storage-----------------------------------------------------------
-function setLocalStorage() {
+//-----------------------------------------------------------------------------
+function setLocalStorage(ultimateParent) {
     localStorage.clear();
-    allItems.forEach((item, index) => {
-        localStorage.setItem(index, JSON.stringify(item));
-    });
+    localStorage.setItem("noteBook", JSON.stringify(ultimateParent));
 }
  
+
+
+

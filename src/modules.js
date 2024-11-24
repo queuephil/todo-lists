@@ -12,14 +12,12 @@ const DOM = (function() {
         htmlTag, 
         innerHTML,
         attributes = {},
-        // childs = {},
     ) {
         return { 
             parentSelector, 
             htmlTag,
             innerHTML,
             attributes, 
-            // childs,
         };
     };
     
@@ -54,14 +52,14 @@ const OBJ = (function() {
     const flattenForDOMaddElement = function(object, parentSelector = "container") {
         const flattenedObject = [];
         for (const [key, value] of Object.entries(object)) {
-            if (value.prop?.innerHTML) {
+            if (value.domProperties?.innerHTML) {
                 flattenedObject.push({
                     // define key of parentObject as parentSelector
-                    parentSelector: `.${parentSelector}`, 
+                    parentSelector: `[data-id="${parentSelector}"]`,
                     // get the other properties
-                    htmlTag: value.prop.htmlTag, 
-                    innerHTML: value.prop.innerHTML || "",
-                    attributes: value.prop.attributes,
+                    htmlTag: value.domProperties.htmlTag, 
+                    innerHTML: value.domProperties.innerHTML || "",
+                    attributes: value.domProperties.attributes,
                 });
             }
             if (typeof value === "object" && !Array.isArray(value)) {

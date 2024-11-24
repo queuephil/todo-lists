@@ -66,6 +66,8 @@ function refreshDom(ultimateParent) {
     autoSaveText(".text", ultimateParent);
     preventDefaultEnter(".text");
     deleteNote(".deleteIcon", ultimateParent);
+    markDone(".markDoneIcon", ultimateParent);
+    markImportant(".markImportantIcon", ultimateParent);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,16 +81,17 @@ function addNewNote() {
                     innerHTML: " ",
                     attributes: {
                         "data-id": timestamp+1,
-                        class: `note${timestamp+1} note`},
+                        class: `note`},
                 },
                 [timestamp+2]: {
                     domProperties: {
                         htmlTag: "div",
-                        innerHTML: "...",
+                        innerHTML: " ",
                         attributes: {
                             "data-id": timestamp+2,
                             class: "text", 
-                            contenteditable: "true"},
+                            contenteditable: "true",
+                            "data-placeholder": "newNote"},
                     },
                 },
                 [timestamp+3]: {
@@ -99,7 +102,25 @@ function addNewNote() {
                             "data-id": timestamp+3,
                             class: "material-symbols-outlined deleteIcon"},
                     },
-                }
+                },
+                [timestamp+4]: {
+                    domProperties: {
+                        htmlTag: "div",
+                        innerHTML: "check_box_outline_blank",
+                        attributes: {
+                            "data-id": timestamp+4,
+                            class: "material-symbols-outlined markDoneIcon"},
+                    },
+                },
+                [timestamp+5]: {
+                    domProperties: {
+                        htmlTag: "div",
+                        innerHTML: "<span class='material-symbols-outlined' style='color: rgba(0, 0, 0, 0.1)'>priority_high</span>",
+                        attributes: {
+                            "data-id": timestamp+5,
+                            class: "material-symbols-outlined markImportantIcon"},
+                    },
+                },
             },
         }
         Object.assign(ultimateParent.noteBook, newNote);
@@ -124,44 +145,74 @@ function findObjectById(object, domId) {
 }
 
 //-----------------------------------------------------------------------------
-function deleteNote(buttonElement, ultimateParent) {
-    document.querySelectorAll(buttonElement).forEach(element => {
+function deleteNote(deleteElement, ultimateParent) {
+    document.querySelectorAll(deleteElement).forEach(element => {
         element.addEventListener("click", () => {
-            // define id here (in case the parentId is required)
+            // find the correct object
             const domIdObject = element.dataset.id;
             const domIdParent = document.querySelector(
-                `[data-id="${domIdObject}"]`).parentElement
-            const domId = domIdParent.dataset.id
-            // run the function
+                `[data-id="${domIdObject}"]`).parentElement;
+            const domId = domIdParent.dataset.id;
             const { foundObject, key } = findObjectById(ultimateParent, domId);
+            // act on that object
             delete foundObject[key];
-            // refresh the DOM
+            // refresh DOM & local storage
             refreshDom(ultimateParent);
             setLocalStorage(ultimateParent);
         })
     })
 }
 
-function markDone() {
-    
+//-----------------------------------------------------------------------------
+function markDone(markElement, ultimateParent) {
+    document.querySelectorAll(markElement).forEach(element => {
+        element.addEventListener("click", () => {
+            // find the correct object
+            const domId = element.dataset.id;
+            const { foundObject, key } = findObjectById(ultimateParent, domId);
+            // act on that object
+            foundObject[key]["domProperties"].innerHTML == "check_box"?
+            foundObject[key]["domProperties"].innerHTML = "check_box_outline_blank":
+            foundObject[key]["domProperties"].innerHTML = "check_box";
+            // refresh DOM & local storage
+            refreshDom(ultimateParent);
+            setLocalStorage(ultimateParent);
+        })
+    })
 }
 
-
-
-
-
+//-----------------------------------------------------------------------------
+function markImportant(markElement, ultimateParent) {
+    document.querySelectorAll(markElement).forEach(element => {
+        element.addEventListener("click", () => {
+            // find the correct object
+            const domId = element.dataset.id;
+            const { foundObject, key } = findObjectById(ultimateParent, domId);
+            // act on that object
+            foundObject[key]["domProperties"].innerHTML == 
+            "<span class='material-symbols-outlined' style='color: rgba(0, 0, 0, 0.1)'>priority_high</span>"?
+            foundObject[key]["domProperties"].innerHTML = 
+            "<span class='material-symbols-outlined' style='color: black'>priority_high</span>":
+            foundObject[key]["domProperties"].innerHTML = 
+            "<span class='material-symbols-outlined' style='color: rgba(0, 0, 0, 0.1)'>priority_high</span>";
+            // refresh DOM & local storage
+            refreshDom(ultimateParent);
+            setLocalStorage(ultimateParent);
+        })
+    })
+}
 
 //-----------------------------------------------------------------------------
 function autoSaveText(textElement, ultimateParent) {
     document.querySelectorAll(textElement).forEach((element) => {
         element.addEventListener("blur", () => {
-            // define id here (in case the parentId is required)   
+            // find the correct object   
             const domId = element.dataset.id;
-            // run the function
-            const newValue = element.innerHTML;
             const { foundObject, key } = findObjectById(ultimateParent, domId);
+            // act on that object
+            const newValue = element.innerHTML;
             foundObject[key]["domProperties"].innerHTML = newValue;
-            // refresh the DOM
+            // refresh DOM & local storage
             refreshDom(ultimateParent);
             setLocalStorage(ultimateParent);
         });

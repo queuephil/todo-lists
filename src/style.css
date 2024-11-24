@@ -25,9 +25,9 @@
   outline: none;
   
   font-size: 1rem;
-  line-height: 1.5;
+  line-height: 1.5rem;
   
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 /* imports __________________________________________________________________*/
@@ -68,29 +68,47 @@ hr {
 /* segments _________________________________________________________________*/
 
 body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
   /* >header {
     width: 100vw;
   } */
   >main {
     width: clamp(300px, 100%, 900px);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    border-radius: 1rem;
     
-    background-color: var(--black050);
+    /* background-color: var(--black050); */
   }
   /* >footer {
     width: 100vw;
   } */
 }
 
+.addIcon {
+  margin-left: 24px;
+}
+
 .noteBook {
-  display: grid;
-  grid-template: 1fr;
+  display: flex;
+  flex-direction: column;
   >.note {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin: 0.25rem 0;
     >.text {
-      background-color: lightgreen;
-      width: 80%;
+      order: 3;
+      flex: 1;
+      background-color: var(--black010);
+      padding: 0 0.25rem;
+      margin: 0 0.25rem;
+      border-radius: 0.25rem;
     }
+    >.markImportantIcon {order: 1;}
+    >.markDoneIcon {order: 2;}
+    >.deleteIcon {order: 4;}
   }
 }

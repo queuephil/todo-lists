@@ -30,13 +30,6 @@
   /* border: 1px solid red; */
 }
 
-/* imports __________________________________________________________________*/
-
-/* @font-face {
-  font-family: Italiana;
-  src: url("./Italiana-Regular.ttf");
-} */
-
 /* elements _________________________________________________________________*/
 
 hr {
@@ -44,24 +37,7 @@ hr {
   width: 75%;
 }
 
-/* image {
-  object-fit: cover;
-  object-position: center center;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-} */
-
-/* .button {
-  border-radius: 10rem;
-  padding: 0.5rem 1rem;
-  
-  background-color: var(--accent);
-  color: var(--accent);
-
-  cursor: pointer;
-} */
-
-.material-symbols-outlined {
+.button,.material-symbols-outlined {
   cursor: pointer;
 }
 
@@ -78,37 +54,81 @@ body {
   } */
   >main {
     width: clamp(300px, 100%, 900px);
-    box-shadow: var(--shadow);
-    padding: 1rem;
-    border-radius: 1rem;
-    
-    /* background-color: var(--black050); */
+    >.container{
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
   }
   /* >footer {
     width: 100vw;
   } */
 }
 
+.noteBookContainer {
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  border-radius: 1rem;
+
+  >.noteBook {
+    line-height: 2rem;
+    
+    >.note {
+      display: flex;
+      margin: 0.5rem 0;
+      
+      >.text {
+        order: 4;
+        flex: 1;
+        margin: 0 0.5rem;
+        background-color: var(--black010);
+        border-radius: 0.25rem;
+      }
+      >.markImportantIcon {order: 1; }
+      >.markDoneIcon {order: 2;}
+      >.date {order: 3; margin-left: 0.25rem;}
+      >.deleteIcon {order: 5;}
+    }
+  }
+}
+
+[data-markimportant = "notImportant"] {
+  color: var(--black010);
+}
+
 .addIcon {
   margin-left: 24px;
 }
 
-.noteBook {
-  display: flex;
-  flex-direction: column;
-  >.note {
-    display: flex;
-    margin: 0.25rem 0;
-    >.text {
-      order: 3;
-      flex: 1;
-      background-color: var(--black010);
-      padding: 0 0.25rem;
-      margin: 0 0.25rem;
-      border-radius: 0.25rem;
-    }
-    >.markImportantIcon {order: 1;}
-    >.markDoneIcon {order: 2;}
-    >.deleteIcon {order: 4;}
+.addNotebook {
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  border-radius: 1rem;
+  color: var(--black050);
+  order: 1000;
+}
+
+.deleteNotebook {
+  color: var(--black050);
+  display: inline;
+  float: right;
+}
+
+.date {
+  position: relative;
+
+  >.dateIcon {
+    cursor: pointer;
+  }
+  >.dateInput {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+  }
+  >.dateText {
+    display: inline;
+    vertical-align: top;
+    margin-left: 0.25rem;
   }
 }

@@ -5,22 +5,7 @@
 // elements.forEach((element) => DOM.addElement(element));
 
 const DOM = (function() {
-    
-    // define objects with the properties required to add DOM elements---------
-    const defineElement = function defineElement(
-        parentSelector, 
-        htmlTag, 
-        innerHTML,
-        attributes = {},
-    ) {
-        return { 
-            parentSelector, 
-            htmlTag,
-            innerHTML,
-            attributes, 
-        };
-    };
-    
+       
     // add DOM elements with the defined properties----------------------------
     const addElement = function addElement({ 
         parentSelector, 
@@ -38,7 +23,7 @@ const DOM = (function() {
     };
     
     // return all functions----------------------------------------------------
-    return { defineElement, addElement };
+    return { addElement };
 })();
 
 const OBJ = (function() {
@@ -52,13 +37,13 @@ const OBJ = (function() {
     const flattenForDOMaddElement = function(object, parentSelector = "container") {
         const flattenedObject = [];
         for (const [key, value] of Object.entries(object)) {
-            if (value.domProperties?.innerHTML) {
+            if (value.domProperties) {
                 flattenedObject.push({
                     // define key of parentObject as parentSelector
                     parentSelector: `[data-id="${parentSelector}"]`,
                     // get the other properties
                     htmlTag: value.domProperties.htmlTag, 
-                    innerHTML: value.domProperties.innerHTML || "",
+                    ...(value.domProperties.innerHTML !== "" && { innerHTML: value.domProperties.innerHTML }),
                     attributes: value.domProperties.attributes,
                 });
             }

@@ -6,6 +6,7 @@
   
   --black010: rgba(0, 0, 0, 0.1);
   --black050: rgba(0, 0, 0, 0.5);
+  
   --gray010:rgba(128, 128, 128, 0.1);
   --gray050:rgba(128, 128, 128, 0.5);
   --white010: rgba(255, 255, 255, 0.1);
@@ -116,6 +117,7 @@ body {
 
 .date {
   position: relative;
+  color: var(--black050);
 
   >.dateIcon {
     cursor: pointer;
